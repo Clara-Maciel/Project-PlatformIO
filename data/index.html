@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP8266 | Painel Inteligente</title>
+  <style>
+   
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif; 
+    }
+    body {
+      background: radial-gradient(circle at top right, #1a001f, #0a0012);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 30px 10px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 25px;
+      color: #d19bff;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #c770ff;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 20px rgba(198, 80, 255, 0.15);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(198, 80, 255, 0.4);
+    }
+    .icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 15px;
+      background: #d19bff; 
+      border-radius: 50%;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.9; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    .label {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #e7c6ff;
+    }
+    .valor {
+      font-size: 2.4em;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 10px;
+      text-shadow: 0 0 10px #c770ff;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 0.9em;
+      opacity: 0.7;
+      letter-spacing: 1px;
+      color: #e7c6ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>💜 Painel Inteligente ESP8266</h1>
+  <div class="dashboard">
+    <div class="card">
+      <div class="icon"></div> <div class="label">Temperatura</div>
+      <div class="valor" id="temp">-- °C</div>
+    </div>
+    <div class="card">
+      <div class="icon"></div> <div class="label">Umidade</div>
+      <div class="valor" id="umid">-- %</div>
+    </div>
+    <div class="card">
+      <div class="icon"></div> <div class="label">Distância</div>
+      <div class="valor" id="dist">-- cm</div>
+    </div>
+  </div>
+  <footer>© 2025 - Projeto IoT das Meninas Super Poderosas💜</footer>
+  
+  <script>
+    // CÓDIGO DE ATUALIZAÇÃO DE DADOS 
+    async function atualizar() {
+      try {
+        // Faz a requisição HTTP GET para a rota /dados no mesmo servidor (192.168.4.1)
+        const resposta = await fetch('/dados');
+        
+        // Converte a resposta JSON em um objeto JavaScript
+        const dados = await resposta.json(); 
+        
+        // Atualiza os elementos na página com os dados recebidos
+        document.getElementById('temp').textContent = dados.temperatura + " °C";
+        document.getElementById('umid').textContent = dados.umidade + " %";
+        document.getElementById('dist').textContent = dados.distancia + " cm";
+      } catch (e) {
+        // Exibe erro se o ESP8266 falhar ou os dados forem inválidos
+        console.error("Erro ao atualizar dados:", e);
+        document.getElementById('temp').textContent = "ERR";
+        document.getElementById('umid').textContent = "ERR";
+        document.getElementById('dist').textContent = "ERR";
+      }
+    }
+    
+    // Configura a função 'atualizar' para ser chamada a cada 2000 milissegundos (2 segundos)
+    setInterval(atualizar, 2000); 
+    
+    // Chama a função uma vez imediatamente ao carregar a página
+    atualizar(); 
+  </script>
+</body>
+</html>
