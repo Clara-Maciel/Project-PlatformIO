@@ -1,3 +1,11 @@
+
+//Apresentação do index.html 
+//O'Que o código faz:
+//É uma página HTML que o ESP8266 serve via SPIFFS. Ela faz requisições periódicas ao
+ endpoint /dados do ESP, recebe um JSON com temperatura, umidade e distancia e 
+ atualiza os valores exibidos na tela a cada 2 segundos
+//Vamos iniciar definindo o título, definindo a codificação e 	a responsividade em telas pequenas 
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -5,7 +13,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ESP8266 Dados</title>
   <style>
-    /* CSS Mínimo: Apenas para centralizar e melhorar a fonte */
     body {
       font-family: Arial, sans-serif;
       text-align: center;
@@ -28,32 +35,56 @@
     .label { font-weight: bold; }
     .valor { color: #0f0; }
   </style>
+
+  // No corpo da página que é o <body>  nele a gente vai exibir a 
+    temperatura ea umidade que foram captadas,
+     ou seja, vai mostrar o'que foi gravado na memória flash do esp
+
 </head>
 <body>
   <h1>Painel IoT</h1>
-  
+  //<ul> é uma lista.
+//<li> é cada item da lista.
+
+//Cada item possui:
+//Um rótulo (Temperatura, Umidade, Distância)
+//Um valor dinâmico, que começa como "--" e depois é atualizado pelo JavaScript.
+Estes IDs servem como “endereços” para que o JavaScript os encontre e modifique
+ os valores da página. Esses valores são preenchidos depois que o ESP8266, 
+ que vira um mini servidor envia o JSON.
+
   <ul>
     <li>
       <span class="label">Temperatura:</span>
-      <span class="valor" id="temp">-- °C</span>
+      <span class="valor" id="temp"> -- °C</span>
     </li>
     <li>
       <span class="label">Umidade:</span>
-      <span class="valor" id="umid">-- %</span>
+      <span class="valor" id="umid"> -- %</span>
     </li>
     <li>
       <span class="label">Distância:</span>
-      <span class="valor" id="dist">-- cm</span>
+      <span class="valor" id="dist"> -- cm</span>
     </li>
   </ul>
-
 </body>
+Depois vamos abrir outro o script para implentar o java script, 
+ j que vai pegar os dados no esp, 
+ fornecidos pelo main.cpp e colocá-los nas respectivas tags <span></span>
   <script>
     async function atualizar() {
       try {
+          //fetch() é uma função do JavaScript usada para fazer requisições HTTP,.
+        // ele Pede ao ESP os dados ou seja buscar algo de um servidor e 
+        // abre a rota do ESP, essa rota é criada no main.cpp
+        //server.on("/dados", handleDados)
         const resposta = await fetch('/dados');
-        const dados = await resposta.json();
-        
+          //o awairt espera a resposta do servidor e
+          // depois converte a resposta em JSON
+        const dados = await resposta.json(); 
+
+        // Atualiza os valores na página HTML
+         //Aqui ele pega os dados do JSON e coloca nos respectivos IDs
         document.getElementById('temp').textContent = dados.temperatura + " °C";
         document.getElementById('umid').textContent = dados.umidade + " %";
         document.getElementById('dist').textContent = dados.distancia + " cm";
@@ -66,6 +97,6 @@
     }
     setInterval(atualizar, 2000);
     atualizar();
-  </script>
+  </script> 
 </body>
 </html>
